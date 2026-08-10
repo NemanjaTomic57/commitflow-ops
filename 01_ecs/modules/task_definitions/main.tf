@@ -185,11 +185,23 @@ resource "aws_ecs_task_definition" "grafana" {
       name      = "grafana"
       image     = "grafana/grafana:12.2"
       essential = true
+
       portMappings = [
         {
           containerPort = 3000
         }
       ]
+
+      healthcheck = {
+        command = [
+          "CMD-SHELL",
+          "curl -f http://localhost:3000/api/health || exit 1"
+        ]
+        interval    = 10
+        timeout     = 5
+        retires     = 3
+        startPeriod = 30
+      }
 
       secrets = [
         {

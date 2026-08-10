@@ -70,5 +70,5 @@ resource "aws_ssm_parameter" "db_url_commitflow" {
 resource "aws_ssm_parameter" "db_url_grafana" {
   name  = "/commitflow/db/url/grafana"
   type  = "SecureString"
-  value = "postgres://${aws_db_instance.this.username}:${aws_db_instance.this.password}@${aws_db_instance.this.address}:${aws_db_instance.this.port}/grafana"
+  value = "postgres://${aws_db_instance.this.username}:${aws_db_instance.this.password}@${aws_db_instance.this.address}:${aws_db_instance.this.port}/grafana?sslmode=require"
 }

@@ -1,3 +1,6 @@
+# Ansible inventory is dynamically created
+inventory.yml
+
 # Local .terraform directories
 .terraform/
 
@@ -41,4 +44,4 @@ terraform.rc
 
 # Optional: ignore plan files saved before destroying Terraform configuration
 # Uncomment the line below if you want to ignore planout files.
-# planout
+planout

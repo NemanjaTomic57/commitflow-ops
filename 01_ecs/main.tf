@@ -23,6 +23,7 @@ data "terraform_remote_state" "base" {
 locals {
   name                  = "commitflow"
   aws_region            = "eu-central-1"
+  public_subnet_ids     = data.terraform_remote_state.base.outputs.public_subnet_ids
   private_subnet_ids    = data.terraform_remote_state.base.outputs.private_subnet_ids
   ecs_security_group_id = data.terraform_remote_state.base.outputs.ecs_security_group_id
 }
@@ -107,7 +108,7 @@ resource "aws_ecs_service" "grafana" {
   name                 = "grafana"
   cluster              = aws_ecs_cluster.commitflow.id
   task_definition      = module.task_definitions.grafana_task_definition_arn
-  desired_count        = 3
+  desired_count        = 1
   launch_type          = "FARGATE"
   force_new_deployment = true
 

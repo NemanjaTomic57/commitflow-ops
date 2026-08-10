@@ -82,6 +82,16 @@ resource "aws_vpc_security_group_egress_rule" "nat_allow_postgres" {
   to_port                      = 5432
 }
 
+resource "aws_vpc_security_group_egress_rule" "nat_allow_grafana" {
+  security_group_id = aws_security_group.nat.id
+  description       = "Allow Grafana traffic to ECS security group"
+
+  referenced_security_group_id = aws_security_group.ecs.id
+  from_port                    = 3000
+  ip_protocol                  = "tcp"
+  to_port                      = 3000
+}
+
 ##################################################
 # Kafka
 ##################################################
@@ -194,9 +204,19 @@ resource "aws_security_group" "ecs" {
   }
 }
 
+resource "aws_vpc_security_group_ingress_rule" "ecs_allow_grafana" {
+  security_group_id = aws_security_group.ecs.id
+  description       = "Allow inbound Grafana traffic"
+
+  referenced_security_group_id = aws_security_group.nat.id
+  from_port                    = 3000
+  ip_protocol                  = "tcp"
+  to_port                      = 3000
+}
+
 resource "aws_vpc_security_group_egress_rule" "ecs_allow_http" {
   security_group_id = aws_security_group.ecs.id
-  description       = "Allow outbound HTTP traffic over NAT instances"
+  description       = "Allow outbound HTTP traffic"
 
   cidr_ipv4   = "0.0.0.0/0"
   from_port   = 80
@@ -206,7 +226,7 @@ resource "aws_vpc_security_group_egress_rule" "ecs_allow_http" {
 
 resource "aws_vpc_security_group_egress_rule" "ecs_allow_https" {
   security_group_id = aws_security_group.ecs.id
-  description       = "Allow outbound HTTPS traffic over NAT instances"
+  description       = "Allow outbound HTTPS traffic"
 
   cidr_ipv4   = "0.0.0.0/0"
   from_port   = 443

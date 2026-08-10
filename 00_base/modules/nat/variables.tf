@@ -28,7 +28,7 @@ variable "ami_id" {
 
 variable "instance_type" {
   type    = string
-  default = "t4g.micro"
+  default = "t4g.nano"
 }
 
 variable "key_name" {
