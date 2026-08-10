@@ -20,6 +20,10 @@ output "private_subnet_ids" {
 # Security Groups
 ##################################################
 
+output "alb_security_group_id" {
+  value = module.security.alb_security_group_id
+}
+
 output "ecs_security_group_id" {
   value = module.security.ecs_security_group_id
 }

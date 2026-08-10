@@ -93,6 +93,50 @@ resource "aws_vpc_security_group_egress_rule" "nat_allow_grafana" {
 }
 
 ##################################################
+# Application Load Balancer
+##################################################
+
+resource "aws_security_group" "alb" {
+  name        = "${var.name}-alb-sg"
+  description = "Security group for Application Load Balancer"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = "${var.name}-alb-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "alb_allow_http" {
+  security_group_id = aws_security_group.alb.id
+  description       = "Allow inbound HTTP traffic"
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  ip_protocol = "tcp"
+  to_port     = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "alb_allow_https" {
+  security_group_id = aws_security_group.alb.id
+  description       = "Allow inbound HTTPS traffic"
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 443
+  ip_protocol = "tcp"
+  to_port     = 443
+}
+
+resource "aws_vpc_security_group_egress_rule" "alb_allow_grafana" {
+  security_group_id = aws_security_group.alb.id
+  description       = "Allow outbound Grafana traffic to ECS"
+
+  referenced_security_group_id = aws_security_group.ecs.id
+  from_port                    = 3000
+  ip_protocol                  = "tcp"
+  to_port                      = 3000
+}
+
+##################################################
 # Kafka
 ##################################################
 
@@ -208,7 +252,7 @@ resource "aws_vpc_security_group_ingress_rule" "ecs_allow_grafana" {
   security_group_id = aws_security_group.ecs.id
   description       = "Allow inbound Grafana traffic"
 
-  referenced_security_group_id = aws_security_group.nat.id
+  referenced_security_group_id = aws_security_group.alb.id
   from_port                    = 3000
   ip_protocol                  = "tcp"
   to_port                      = 3000
