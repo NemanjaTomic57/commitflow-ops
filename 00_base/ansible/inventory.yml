@@ -1,0 +1,32 @@
+all:
+  vars:
+    ansible_ssh_private_key_file: ~/.ssh/aws.pem
+  children:
+    kafka:
+      vars:
+        ansible_user: admin
+        ansible_ssh_common_args: -o StrictHostKeyChecking=no -o ProxyCommand="ssh
+          -i ~/.ssh/aws.pem -o StrictHostKeyChecking=no -W %h:%p ec2-user@35.159.128.188"
+        kafka: /opt/kafka
+        kafka_logs: '{{ kafka }}/logs'
+        kafka_bin: '{{ kafka }}/bin'
+        kafka_config: '{{ kafka }}/config'
+        kafka_config_server: '{{ kafka_config }}/server.properties'
+        kafka_cluster_uuid: 9QRITYyyS2qeAIfDgxB3OA
+      hosts:
+        kafka-1:
+          ansible_host: 10.100.16.137
+        kafka-2:
+          ansible_host: 10.100.17.182
+        kafka-3:
+          ansible_host: 10.100.18.233
+    db:
+      vars:
+        ansible_user: ec2-user
+        ssm_db_address: arn:aws:ssm:eu-central-1:761018874759:parameter/commitflow/db/address
+        ssm_db_port: arn:aws:ssm:eu-central-1:761018874759:parameter/commitflow/db/port
+        ssm_db_username: arn:aws:ssm:eu-central-1:761018874759:parameter/commitflow/db/username
+        ssm_db_password: arn:aws:ssm:eu-central-1:761018874759:parameter/commitflow/db/password
+      hosts:
+        bastion:
+          ansible_host: 35.159.128.188
