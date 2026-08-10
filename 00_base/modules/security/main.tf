@@ -116,17 +116,27 @@ resource "aws_vpc_security_group_ingress_rule" "kafka_allow_ssh" {
   to_port                      = 22
 }
 
-resource "aws_vpc_security_group_ingress_rule" "kafka_allow_kafka" {
+resource "aws_vpc_security_group_ingress_rule" "kafka_allow_kafka_broker" {
   for_each = {
     kafka = aws_security_group.kafka.id
     ecs   = aws_security_group.ecs.id
   }
 
   security_group_id = aws_security_group.kafka.id
-  description       = "Allow inbound Kafka traffic"
+  description       = "Allow inbound Kafka traffic on broker port"
 
   referenced_security_group_id = each.value
   from_port                    = 9092
+  ip_protocol                  = "tcp"
+  to_port                      = 9092
+}
+
+resource "aws_vpc_security_group_ingress_rule" "kafka_allow_kafka_controller" {
+  security_group_id = aws_security_group.kafka.id
+  description       = "Allow inbound Kafka traffic on controller port"
+
+  referenced_security_group_id = aws_security_group.kafka.id
+  from_port                    = 9093
   ip_protocol                  = "tcp"
   to_port                      = 9093
 }
