@@ -17,7 +17,12 @@ variable "ecs_execution_role_arn" {
   description = "ARN of the role for the ECS task execution role"
 }
 
-variable "ecr_commitflow_repository_url" {
+variable "ecr_commitflow_url" {
   type        = string
   description = "ECR repository URL for commitflow image"
+}
+
+variable "ecr_commitflow_grafana_url" {
+  type        = string
+  description = "ECR URL for commitflow/grafana image"
 }

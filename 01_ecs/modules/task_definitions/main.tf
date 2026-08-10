@@ -16,10 +16,14 @@ locals {
   ssm_parameter_github_pat            = data.terraform_remote_state.base.outputs.ssm_parameter_github_pat
   ssm_parameter_gitlab_pat            = data.terraform_remote_state.base.outputs.ssm_parameter_gitlab_pat
   ssm_parameter_kafka_bootstrap_sever = data.terraform_remote_state.base.outputs.ssm_parameter_kafka_bootstrap_server
-  ssm_parameter_db_url_commitflow     = data.terraform_remote_state.base.outputs.ssm_parameter_db_url_commitflow
-  ssm_parameter_db_url_grafana        = data.terraform_remote_state.base.outputs.ssm_parameter_db_url_grafana
   ssm_parameter_grafana_username      = data.terraform_remote_state.base.outputs.ssm_parameter_grafana_username
   ssm_parameter_grafana_password      = data.terraform_remote_state.base.outputs.ssm_parameter_grafana_password
+  ssm_parameter_db_url_commitflow     = data.terraform_remote_state.base.outputs.ssm_parameter_db_url_commitflow
+  ssm_parameter_db_url_grafana        = data.terraform_remote_state.base.outputs.ssm_parameter_db_url_grafana
+  ssm_parameter_db_address            = data.terraform_remote_state.base.outputs.ssm_parameter_db_address
+  ssm_parameter_db_name               = data.terraform_remote_state.base.outputs.ssm_parameter_db_name
+  ssm_parameter_db_username           = data.terraform_remote_state.base.outputs.ssm_parameter_db_username
+  ssm_parameter_db_password           = data.terraform_remote_state.base.outputs.ssm_parameter_db_password
 }
 
 ##################################################
@@ -54,7 +58,7 @@ resource "aws_ecs_task_definition" "commitflow_producer" {
   container_definitions = jsonencode([
     {
       name      = "producer"
-      image     = "${var.ecr_commitflow_repository_url}:latest"
+      image     = "${var.ecr_commitflow_url}:latest"
       essential = true
 
       command = [
@@ -122,7 +126,7 @@ resource "aws_ecs_task_definition" "commitflow_consumer" {
   container_definitions = jsonencode([
     {
       name      = "consumer"
-      image     = "${var.ecr_commitflow_repository_url}:latest"
+      image     = "${var.ecr_commitflow_url}:latest"
       essential = true
 
       command = ["consumer"]
@@ -183,7 +187,7 @@ resource "aws_ecs_task_definition" "grafana" {
   container_definitions = jsonencode([
     {
       name      = "grafana"
-      image     = "grafana/grafana:12.2"
+      image     = "${var.ecr_commitflow_grafana_url}"
       essential = true
 
       portMappings = [
@@ -215,6 +219,22 @@ resource "aws_ecs_task_definition" "grafana" {
         {
           name      = "GF_DATABASE_URL"
           valueFrom = local.ssm_parameter_db_url_grafana
+        },
+        {
+          name      = "DB_HOST"
+          valueFrom = local.ssm_parameter_db_address
+        },
+        {
+          name      = "DB_DATABASE"
+          valueFrom = local.ssm_parameter_db_name
+        },
+        {
+          name      = "DB_USER"
+          valueFrom = local.ssm_parameter_db_username
+        },
+        {
+          name      = "DB_PASSWORD"
+          valueFrom = local.ssm_parameter_db_password
         },
       ]
 

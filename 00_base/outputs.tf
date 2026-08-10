@@ -20,10 +20,6 @@ output "private_subnet_ids" {
 # Security Groups
 ##################################################
 
-output "alb_security_group_id" {
-  value = module.security.alb_security_group_id
-}
-
 output "ecs_security_group_id" {
   value = module.security.ecs_security_group_id
 }
@@ -38,6 +34,10 @@ output "ssm_parameter_db_address" {
 
 output "ssm_parameter_db_port" {
   value = module.rds.ssm_parameter_db_port
+}
+
+output "ssm_parameter_db_name" {
+  value = module.rds.ssm_parameter_db_name
 }
 
 output "ssm_parameter_db_username" {
@@ -77,6 +77,20 @@ output "kafka_private_ips" {
 output "ssm_parameter_kafka_bootstrap_server" {
   description = "IP addresses for the Kafka bootstrap server"
   value       = module.kafka.ssm_parameter_kafka_bootstrap_server
+}
+
+##################################################
+# Application Load Balancer
+##################################################
+
+output "alb_url" {
+  description = "URL of the Application Load Balancer for the Grafana listener"
+  value       = module.alb.alb_url
+}
+
+output "alb_target_group" {
+  description = "ARN of the ALB target group"
+  value       = module.alb.alb_target_group
 }
 
 ##################################################
