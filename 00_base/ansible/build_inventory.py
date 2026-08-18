@@ -4,12 +4,12 @@ import subprocess
 import yaml
 
 # Output names for Terraform output
-NAT_PUBLIC_IPS_TF_OUTPUT = "nat_public_ips"
-KAFKA_PRIVATE_IPS_TF_OUTPUT = "kafka_private_ips"
-SSM_DB_ADDRESS_TF_OUTPUT = "ssm_parameter_db_address"
-SSM_DB_PORT_TF_OUTPUT = "ssm_parameter_db_port"
-SSM_DB_USERNAME_TF_OUTPUT = "ssm_parameter_db_username"
-SSM_DB_PASSWORD_TF_OUTPUT = "ssm_parameter_db_password"
+TF_OUTPUT_NAT_PUBLIC_IPS = "nat_public_ips"
+TF_OUTPUT_KAFKA_PRIVATE_IPS = "kafka_private_ips"
+TF_OUTPUT_SSM_DB_ADDRESS = "ssm_parameter_db_address"
+TF_OUTPUT_SSM_DB_PORT = "ssm_parameter_db_port"
+TF_OUTPUT_SSM_DB_USERNAME = "ssm_parameter_db_username"
+TF_OUTPUT_SSM_DB_PASSWORD = "ssm_parameter_db_password"
 
 # Default SSH user used by Ansible to connect to all hosts.
 BASTION_USER = "ec2-user"
@@ -28,13 +28,13 @@ def terraform_output():
 
 
 def build_inventory(tf):
-    bastion_ip = next(iter(tf[NAT_PUBLIC_IPS_TF_OUTPUT]["value"].values()))
-    kafka_private_ips = tf[KAFKA_PRIVATE_IPS_TF_OUTPUT]["value"]
+    bastion_ip = next(iter(tf[TF_OUTPUT_NAT_PUBLIC_IPS]["value"].values()))
+    kafka_private_ips = tf[TF_OUTPUT_KAFKA_PRIVATE_IPS]["value"]
 
-    ssm_db_address = tf[SSM_DB_ADDRESS_TF_OUTPUT]["value"]
-    ssm_db_port = tf[SSM_DB_PORT_TF_OUTPUT]["value"]
-    ssm_db_username = tf[SSM_DB_USERNAME_TF_OUTPUT]["value"]
-    ssm_db_password = tf[SSM_DB_PASSWORD_TF_OUTPUT]["value"]
+    ssm_db_address = tf[TF_OUTPUT_SSM_DB_ADDRESS]["value"]
+    ssm_db_port = tf[TF_OUTPUT_SSM_DB_PORT]["value"]
+    ssm_db_username = tf[TF_OUTPUT_SSM_DB_USERNAME]["value"]
+    ssm_db_password = tf[TF_OUTPUT_SSM_DB_PASSWORD]["value"]
 
     inventory = {
         "all": {
